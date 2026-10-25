@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DM BOSS - Live Satta Bazar Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-gray-100 font-sans">
+
+    <!-- Custom Pop-up Modal Box -->
+    <div id="custom-popup" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border-2 border-yellow-500 rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl space-y-4">
+            <div class="w-12 h-12 bg-yellow-500/20 text-yellow-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-bell"></i>
+            </div>
+            <h3 id="popup-title" class="text-lg font-black text-yellow-400">सोचना (Notice)</h3>
+            <p id="popup-message" class="text-xs text-gray-300"></p>
+            <button onclick="closePopup()" class="w-full bg-gradient-to-r from-yellow-500 to-amber-600 text-slate-950 font-extrabold py-2.5 rounded-xl text-xs shadow-lg">ठीक है (OK)</button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 border-b border-purple-800 shadow-xl sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-yellow-500 text-slate-900 p-2.5 rounded-xl shadow-lg font-black text-xl flex items-center justify-center">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-200">DM BOSS</h1>
+                    <p class="text-[10px] text-purple-300 tracking-widest uppercase font-semibold">Live Satta Bazar Portal</p>
+                </div>
+            </div>
+            <button onclick="checkAdminAccess()" class="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 text-slate-950 px-4 py-2 rounded-lg text-xs font-bold shadow-lg transition flex items-center space-x-1.5">
+                <i class="fa-solid fa-lock"></i>
+                <span>Admin Login</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Admin Panel Modal/Section -->
+    <div id="admin-section" class="hidden bg-slate-800 border-b border-purple-700/50 p-6 shadow-2xl">
+        <div class="container mx-auto max-w-md space-y-6">
+            <div class="bg-slate-900 p-6 rounded-2xl border border-purple-500/30">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-base font-bold text-yellow-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Admin Panel</span>
+                    </h2>
+                    <button onclick="logoutAdmin()" class="text-xs text-red-400 hover:underline">Logout</button>
+                </div>
+                <form id="admin-form" onsubmit="submitResult(event)" class="space-y-3.5 text-sm">
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">सट्टा बाजार का नाम (Satta Name)</label>
+                        <select id="state_name" class="w-full bg-slate-800 border border-slate-700 text-white p-2.5 rounded-lg focus:outline-none focus:border-yellow-500" required>
+                            <option value="">-- बाजार चुनें (Select Bazar) --</option>
+                            <option value="सदर बाजार">सदर बाजार (Sadar Bazar)</option>
+                            <option value="ग्वालियर">ग्वालियर (Gwalior)</option>
+                            <option value="दिल्ली बाजार">दिल्ली बाजार (Delhi Bazar)</option>
+                            <option value="दिल्ली मटका">दिल्ली मटका (Delhi Matka)</option>
+                            <option value="श्री गणेश">श्री गणेश (Shri Ganesh)</option>
+                            <option value="आगरा">आगरा (Agra)</option>
+                            <option value="फरीदाबाद">फरीदाबाद (Faridabad)</option>
+                            <option value="अलवर">अलवर (Alwar)</option>
+                            <option value="गाज़ियाबाद">गाज़ियाबाद (Ghaziabad)</option>
+                            <option value="द्वारका">द्वारका (Dwarka)</option>
+                            <option value="गली">गली (Gali)</option>
+                            <option value="दिसावर">दिसावर (Disawar)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">गेम का नाम (Game Name)</label>
+                        <input type="text" id="draw_name" placeholder="Jaise: MAIN BAZAR" class="w-full bg-slate-800 border border-slate-700 text-white p-2.5 rounded-lg focus:outline-none focus:border-yellow-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">प्राइज नंबर (Prize Number)</label>
+                        <input type="text" id="prize_number" placeholder="Jaise: 45" class="w-full bg-slate-800 border border-slate-700 text-white p-2.5 rounded-lg focus:outline-none focus:border-yellow-500 font-bold text-yellow-400" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">समय (Time)</label>
+                            <input type="text" id="draw_time" placeholder="Jaise: 1:20 PM" class="w-full bg-slate-800 border border-slate-700 text-white p-2.5 rounded-lg focus:outline-none focus:border-yellow-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">दिनांक (Date)</label>
+                            <input type="date" id="date" class="w-full bg-slate-800 border border-slate-700 text-white p-2.5 rounded-lg focus:outline-none focus:border-yellow-500" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 text-slate-950 font-extrabold p-3 rounded-lg shadow-lg transition mt-2">
+                        Publish Result
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Section -->
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        
+        <!-- Independent Timing Chart Banner (Details Only) -->
+        <div class="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-950 rounded-2xl p-6 mb-8 text-center shadow-2xl border-4 border-yellow-300">
+            <p class="text-xs md:text-sm font-extrabold tracking-wider uppercase mb-2 text-slate-900">--सीधे सट्टा कंपनी का No 1 खाईवाल--</p>
+            <h2 class="text-xl md:text-2xl font-black tracking-tight text-slate-950 flex items-center justify-center space-x-2 mb-3">
+                <span>👑 👑</span>
+                <span>DM BHAI KHAIWAL</span>
+                <span>👑 👑</span>
+            </h2>
+
+            <!-- Exact Chart Details Box from Image (No Results attached here) -->
+            <div class="max-w-md mx-auto bg-amber-300/40 border border-amber-500/50 rounded-xl p-3 mb-4 text-left space-y-1.5 font-bold text-xs sm:text-sm text-slate-950">
+                <div class="flex justify-between items-center border-b border-amber-500/30 pb-1"><span>⏰ सदर बाजार (Sadar Bazar)</span> <span class="tracking-widest">1:20 PM</span></div>
+                <div class="flex justify-between items-center border-b border-amber-500/30 pb-1"><span>⏰ ग्वालियर (Gwalior)</span> <span class="tracking-widest">2:20 PM</span></div>
+                <div class="flex justify-between items-center border-b border-amber-500/30 pb-1"><span>⏰ दिल्ली बाजार (Delhi Bazar)</span> <span class="tracking-widest">2:50 PM</span></div>
+                <div class="flex justify-between items-center border-b border-amber-500/30 pb-1"><span>⏰ दिल्ली मटका (Delhi Matka)</span> <span class="tracking-widest">3:20 PM</span></div>
+                <div class="flex justify-between items-center border-b border-amber-500/30 pb-1"><span>⏰ श्री गणेश (Shri Ganesh)</span> <span class="tracking-widest">4:20 PM</span></div>
+                <div class="flex justify-between items-center border-b border-amber-500/30 pb-1"><span>⏰ आगरा (Agra)</span> <span class="tracking-widest">5:20 PM</span></div>
+                <div class="flex justify-between items-center border-b border-amber-500/30 pb-1"><span>⏰ फरीदाबाद (Faridabad)</span> <span class="tracking-widest">5:50 PM</span></div>
+                <div class="flex justify-between items-center border-b border-amber-500/30 pb-1"><span>⏰ अलवर (Alwar)</span> <span class="tracking-widest">7:20 PM</span></div>
+                <div class="flex justify-between items-center border-b border-amber-500/30 pb-1"><span>⏰ गाज़ियाबाद (Ghaziabad)</span> <span class="tracking-widest">9:30 PM</span></div>
+                <div class="flex justify-between items-center border-b border-amber-500/30 pb-1"><span>⏰ द्वारका (Dwarka)</span> <span class="tracking-widest">10:35 PM</span></div>
+                <div class="flex justify-between items-center border-b border-amber-500/30 pb-1"><span>⏰ गली (Gali)</span> <span class="tracking-widest">11:30 PM</span></div>
+                <div class="flex justify-between items-center"><span>⏰ दिसावर (Disawar)</span> <span class="tracking-widest">1:30 AM</span></div>
+            </div>
+            
+            <p class="font-bold text-sm md:text-base mb-2 text-slate-950">😊 😊 DM BHAI KHAIWAL 😊 😊</p>
+            <p class="text-xs font-extrabold underline mb-4 text-blue-950">Game play karne ke liye niche link par click kare</p>
+            
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="https://wa.me/919887101290?text=Hello%20DM%20Bhai,%20Mujhe%20game%20play%20karna%20hai" target="_blank" class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-3 rounded-full shadow-xl transition space-x-3 text-sm border-2 border-emerald-400 w-full sm:w-auto">
+                    <i class="fa-brands fa-whatsapp text-2xl text-emerald-200"></i>
+                    <div class="text-left leading-tight">
+                        <span class="block text-[10px] text-emerald-100 uppercase tracking-wider">WhatsApp</span>
+                        <span class="text-sm font-black">9887101290</span>
+                    </div>
+                </a>
+
+                <a href="https://t.me/+kUWv4nlNZ2AxZDhl" target="_blank" class="inline-flex items-center justify-center bg-sky-600 hover:bg-sky-500 text-white font-bold px-6 py-3 rounded-full shadow-2xl transition space-x-3 text-sm border-2 border-sky-300 w-full sm:w-auto animate-bounce animate-pulse ring-4 ring-sky-300">
+                    <i class="fa-brands fa-telegram text-2xl text-sky-100"></i>
+                    <div class="text-left leading-tight">
+                        <span class="block text-[10px] text-sky-100 uppercase tracking-wider">Telegram</span>
+                        <span class="text-sm font-black">Join Channel</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="text-center mb-6">
+            <h2 class="text-3xl md:text-4xl font-black text-white tracking-tight">DM BOSS Live Results</h2>
+        </div>
+
+        <!-- Search & Past 5 Days Button -->
+        <div class="mb-6 flex flex-col sm:flex-row gap-3 justify-center items-center max-w-xl mx-auto">
+            <div class="relative w-full">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                    <i class="fa-solid fa-search"></i>
+                </span>
+                <input type="text" id="searchInput" onkeyup="filterResults()" placeholder="Bazar ka naam search karein..." class="w-full bg-slate-800 border border-slate-700 text-white pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:border-yellow-500 text-sm shadow-lg">
+            </div>
+            <button onclick="togglePastRecords()" id="pastBtn" class="bg-purple-700 hover:bg-purple-600 text-white font-bold px-4 py-3 rounded-xl text-xs whitespace-nowrap shadow-lg transition">
+                <i class="fa-solid fa-calendar-days mr-1"></i> पिछले 5 दिन का रिकॉर्ड (Past 5 Days)
+            </button>
+        </div>
+
+        <!-- Results Table Container -->
+        <div class="bg-slate-800/90 backdrop-blur rounded-2xl shadow-2xl border border-purple-500/30 overflow-hidden">
+            <!-- Table Header with exact Hindi & English -->
+            <div class="grid grid-cols-12 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-gray-300 text-xs md:text-sm font-bold uppercase tracking-wider text-center py-3 border-b border-slate-700">
+                <div class="col-span-4 pl-3 text-left">सट्टा का नाम (Satta Name)</div>
+                <div class="col-span-4 border-x border-slate-700">कल का रिजल्ट (Yesterday)</div>
+                <div class="col-span-4">आज का रिजल्ट (Today)</div>
+            </div>
+            
+            <!-- Table Body -->
+            <div id="results-table-body" class="divide-y divide-slate-700/50 text-sm">
+                <!-- Dynamic rows -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-gray-500 text-xs py-8 mt-16 border-t border-slate-800 text-center">
+        <div class="container mx-auto px-4 space-y-2">
+            <p class="text-gray-400 font-medium">DM BOSS - Satta Bazar Live Results Portal</p>
+            <p>&copy; 2026 DM BOSS. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let allResultsData = [];
+        let showingPastDays = false;
+        
+        let dToday = new Date();
+        let todayDateStr = dToday.toISOString().split('T')[0];
+
+        let dYest = new Date();
+        dYest.setDate(dYest.getDate() - 1);
+        let yesterdayDateStr = dYest.toISOString().split('T')[0];
+
+        const officialBazars = [
+            { name: "सदर बाजार", time: "1:20 PM" },
+            { name: "ग्वालियर", time: "2:20 PM" },
+            { name: "दिल्ली बाजार", time: "2:50 PM" },
+            { name: "दिल्ली मटका", time: "3:20 PM" },
+            { name: "श्री गणेश", time: "4:20 PM" },
+            { name: "आगरा", time: "5:20 PM" },
+            { name: "फरीदाबाद", time: "5:50 PM" },
+            { name: "अलवर", time: "7:20 PM" },
+            { name: "गाज़ियाबाद", time: "9:30 PM" },
+            { name: "द्वारका", time: "10:35 PM" },
+            { name: "गली", time: "11:30 PM" },
+            { name: "दिसावर", time: "1:30 AM" }
+        ];
+
+        function showPopup(title, msg) {
+            document.getElementById('popup-title').innerText = title;
+            document.getElementById('popup-message').innerText = msg;
+            document.getElementById('custom-popup').classList.remove('hidden');
+        }
+
+        function closePopup() {
+            document.getElementById('custom-popup').classList.add('hidden');
+        }
+
+        async function getAdminPassword() {
+            try {
+                let res = await fetch('/api/admin/get-password');
+                let data = await res.json();
+                return data.password || "dm@boss2026";
+            } catch (err) {
+                return "dm@boss2026";
+            }
+        }
+
+        async function checkAdminAccess() {
+            let currentPassword = await getAdminPassword();
+            let pass = prompt("Admin Password darj karein:");
+            if (pass === currentPassword) {
+                document.getElementById('admin-section').classList.remove('hidden');
+                showPopup("Safal Login", "Ab aap result update kar sakte hain.");
+            } else if (pass !== null) {
+                showPopup("Access Denied", "Galat Password darj kiya gaya hai!");
+            }
+        }
+
+        function logoutAdmin() {
+            document.getElementById('admin-section').classList.add('hidden');
+            showPopup("Logout", "Aap safaltapoorvak logout ho chuke hain.");
+        }
+
+        async function loadResults() {
+            try {
+                let res = await fetch('/api/results');
+                let data = await res.json();
+                allResultsData = data.data || [];
+                renderScheduleTable(officialBazars);
+            } catch (err) {
+                console.error("Error loading results:", err);
+            }
+        }
+
+        function togglePastRecords() {
+            showingPastDays = !showingPastDays;
+            let btn = document.getElementById('pastBtn');
+            if(showingPastDays) {
+                btn.innerHTML = `<i class="fa-solid fa-bolt mr-1"></i> Live Today View`;
+                btn.classList.remove('bg-purple-700', 'hover:bg-purple-600');
+                btn.classList.add('bg-amber-600', 'hover:bg-amber-500');
+                renderPastDaysTable();
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-calendar-days mr-1"></i> पिछले 5 दिन का रिकॉर्ड (Past 5 Days)`;
+                btn.classList.remove('bg-amber-600', 'hover:bg-amber-500');
+                btn.classList.add('bg-purple-700', 'hover:bg-purple-600');
+                renderScheduleTable(officialBazars);
+            }
+        }
+
+        function renderScheduleTable(bazarsList) {
+            let container = document.getElementById('results-table-body');
+            container.innerHTML = '';
+
+            bazarsList.forEach(bazar => {
+                let yestResult = allResultsData.find(item => 
+                    item.state_name && 
+                    item.state_name.trim().toLowerCase() === bazar.name.toLowerCase() && 
+                    item.date === yesterdayDateStr
+                );
+
+                let todayResult = allResultsData.find(item => 
+                    item.state_name && 
+                    item.state_name.trim().toLowerCase() === bazar.name.toLowerCase() && 
+                    item.date === todayDateStr
+                );
+
+                let yestHtml = yestResult ? 
+                    `<span class="text-lg font-black text-white">${yestResult.prize_number}</span>` : 
+                    `<span class="text-gray-500 font-normal">--</span>`;
+
+                let todayHtml = '';
+                if (todayResult) {
+                    todayHtml = `<span class="bg-emerald-950/80 text-emerald-400 border border-emerald-600/50 font-black px-3.5 py-1.5 rounded-xl text-base tracking-widest inline-block shadow-inner">${todayResult.prize_number}</span>`;
+                } else {
+                    todayHtml = `<span class="inline-block bg-red-600 text-white px-3.5 py-1.5 rounded-full text-xs font-black animate-bounce animate-pulse shadow-lg ring-2 ring-red-400">WAIT</span>`;
+                }
+
+                container.innerHTML += `
+                    <div class="grid grid-cols-12 items-center py-3.5 px-2 hover:bg-slate-750 transition text-center border-b border-slate-700/50">
+                        <div class="col-span-4 text-left pl-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-slate-950 py-2 rounded-xl shadow-md border border-yellow-400">
+                            <span class="font-black text-sm md:text-base block uppercase">${bazar.name}</span>
+                            <span class="text-[11px] text-slate-900 font-extrabold">${bazar.time}</span>
+                        </div>
+                        <div class="col-span-4 border-r border-slate-700/50">
+                            ${yestHtml}
+                        </div>
+                        <div class="col-span-4">
+                            ${todayHtml}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderPastDaysTable() {
+            let container = document.getElementById('results-table-body');
+            container.innerHTML = '';
+
+            if(allResultsData.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-gray-500">Pichhle dinon ka koi record uplabdh nahi hai.</div>`;
+                return;
+            }
+
+            allResultsData.slice(0, 15).forEach(item => {
+                container.innerHTML += `
+                    <div class="grid grid-cols-12 items-center py-3.5 px-2 hover:bg-slate-750 transition text-center border-b border-slate-700/50">
+                        <div class="col-span-4 text-left pl-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-slate-950 py-2 rounded-xl shadow-md border border-yellow-400">
+                            <span class="font-black text-sm md:text-base block uppercase">${item.state_name}</span>
+                            <span class="text-[11px] text-slate-900 font-extrabold">${item.draw_time || 'Live'}</span>
+                        </div>
+                        <div class="col-span-4 border-r border-slate-700/50 text-xs text-purple-300 font-bold">
+                            ${item.draw_name || 'Record'}
+                        </div>
+                        <div class="col-span-4">
+                            <span class="bg-emerald-950/80 text-emerald-400 border border-emerald-600/50 font-black px-3.5 py-1.5 rounded-xl text-base tracking-widest inline-block shadow-inner">${item.prize_number}</span>
+                            <span class="block text-[10px] text-gray-400 mt-0.5">${item.date}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterResults() {
+            let query = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = officialBazars.filter(b => b.name.toLowerCase().includes(query));
+            renderScheduleTable(filtered);
+        }
+
+        async function submitResult(e) {
+            e.preventDefault();
+            let payload = {
+                state_name: document.getElementById('state_name').value,
+                draw_name: document.getElementById('draw_name').value,
+                prize_number: document.getElementById('prize_number').value,
+                draw_time: document.getElementById('draw_time').value,
+                date: document.getElementById('date').value
+            };
+
+            let res = await fetch('/api/update-result', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if(res.ok) {
+                showPopup("Safalta!", "Result DM BOSS par safaltapoorvak update ho gaya hai!");
+                document.getElementById('admin-form').reset();
+                document.getElementById('admin-section').classList.add('hidden');
+                loadResults();
+            } else {
+                showPopup("Error", "Result update karne me kuch samasya aa gayi.");
+            }
+        }
+
+        loadResults();
+    </script>
+</body>
+</html>
