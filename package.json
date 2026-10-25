@@ -1,0 +1,13 @@
+{
+  "name": "lottery-results-site",
+  "version": "1.0.0",
+  "description": "Professional Satta Bazar Results Website with Admin Panel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.7"
+  }
+}
